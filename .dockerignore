@@ -1,0 +1,74 @@
+# Source control
+.git
+.git/**
+.gitattributes
+
+# Python local environments / caches
+**/.venv
+**/.venv/**
+**/venv
+**/venv/**
+**/__pycache__
+**/__pycache__/**
+**/.pytest_cache
+**/.pytest_cache/**
+**/.mypy_cache
+**/.mypy_cache/**
+**/.ruff_cache
+**/.ruff_cache/**
+**/*.pyc
+**/*.pyo
+
+# Never send local secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Generated / local runtime output
+backend/demo_outputs
+backend/demo_outputs/**
+backend/artifacts
+backend/artifacts/**
+backend/tmp
+backend/tmp/**
+backend/temp
+backend/temp/**
+data
+data/**
+
+# Test and documentation files are not needed in the runtime image
+backend/tests
+backend/tests/**
+frontend-lite/tests
+frontend-lite/tests/**
+docs
+docs/**
+
+# Local tooling / package output
+**/node_modules
+**/node_modules/**
+**/.next
+**/.next/**
+dist
+dist/**
+build
+build/**
+*.zip
+*.tar
+*.tar.gz
+*.log
+
+# Editor / OS
+.vscode
+.vscode/**
+.idea
+.idea/**
+.DS_Store
+Thumbs.db
+
+# Deployment/build metadata not needed inside the image
+scripts
+scripts/**
+README.md
+RELEASE_NOTES*.md
+BUILD_VERIFICATION.md

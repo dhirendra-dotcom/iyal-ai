@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "adaptation_families": [
+    "grip_sleeve",
+    "knob_enlarger",
+    "lever_extender",
+    "clamp_adapter",
+    "support_cradle",
+    "button_extender",
+    "mounting_bracket",
+    "container_grip",
+    "unclassified",
+    "environment_adaptation"
+  ],
+  "problem_types": [
+    "grip_instability",
+    "slipping",
+    "rotation",
+    "tremor",
+    "weak_grip",
+    "hand_stiffness",
+    "limited_dexterity",
+    "limited_wrist_motion",
+    "reach_difficulty",
+    "control_precision",
+    "other",
+    "collision_risk",
+    "path_obstruction",
+    "edge_impact",
+    "environment_visibility"
+  ],
+  "knowledge_types": [
+    "ergonomics",
+    "occupational_therapy",
+    "assistive_design",
+    "object_geometry",
+    "manufacturing",
+    "constraints",
+    "template_capability",
+    "prior_cases",
+    "safety",
+    "taxonomy"
+  ],
+  "design_features": [
+    "grip_enlargement",
+    "oval_profile",
+    "round_profile",
+    "surface_texture",
+    "ribs",
+    "palm_flare",
+    "angle",
+    "weighting",
+    "internal_channel",
+    "clearance",
+    "taper",
+    "rounded_edges",
+    "edge_protection",
+    "path_clearance",
+    "furniture_repositioning",
+    "visual_cue",
+    "impact_padding",
+    "reach_access",
+    "custom_environment_fixture"
+  ],
+  "review_status_values": [
+    "approved",
+    "approved_prototype",
+    "prototype",
+    "deprecated"
+  ],
+  "evidence_levels": [
+    "high",
+    "medium",
+    "design_hypothesis",
+    "prototype",
+    "synthetic"
+  ]
+}

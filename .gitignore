@@ -1,0 +1,47 @@
+# Python environments and caches
+**/.venv/
+**/venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/*.py[cod]
+
+# Local environment / secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Generated Arthistics runtime output
+backend/demo_outputs/
+backend/artifacts/
+backend/tmp/
+backend/temp/
+data/
+
+# Frontend / JS caches if a developer adds tooling locally
+**/node_modules/
+**/.next/
+**/*.tsbuildinfo
+
+# Build/package output
+dist/
+build/
+*.zip
+*.tar
+*.tar.gz
+
+# Logs / coverage
+*.log
+.coverage
+htmlcov/
+coverage/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~

@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "constraint_profile_id": "grip-sleeve-v1-fdm-prototype",
+  "adaptation_family": "grip_sleeve",
+  "status": "approved_prototype",
+  "scope_note": "Prototype engineering bounds, not clinical limits. Tune using actual printer/material testing.",
+  "geometry": {
+    "outer_width_mm": {
+      "min": 18.0,
+      "max": 45.0
+    },
+    "outer_depth_mm": {
+      "min": 15.0,
+      "max": 40.0
+    },
+    "adapter_length_mm": {
+      "min": 40.0,
+      "max": 120.0
+    },
+    "angle_deg": {
+      "min": 0.0,
+      "max": 20.0
+    },
+    "minimum_wall_mm": 2.4,
+    "minimum_feature_mm": 1.2
+  },
+  "fit": {
+    "clearance_per_side_mm": {
+      "min": 0.3,
+      "max": 0.8
+    },
+    "default_fit_strategy": "removable_slip_fit",
+    "note": "Calibrate clearance against printer/material and measured object."
+  },
+  "allowed_profiles": [
+    "round",
+    "oval"
+  ],
+  "allowed_textures": [
+    "smooth",
+    "ribbed"
+  ],
+  "allowed_boolean_features": [
+    "palm_flare"
+  ],
+  "validation": {
+    "max_design_attempts": 3,
+    "reject_if_internal_channel_exceeds_outer_geometry": true,
+    "reject_if_wall_below_minimum": true,
+    "reject_if_parameter_outside_range": true
+  }
+}

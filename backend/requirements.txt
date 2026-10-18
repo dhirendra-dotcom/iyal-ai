@@ -1,0 +1,25 @@
+# IYAL.ai Lite v0.13.0
+# Reproducible Google AI / Agent Platform baseline verified by the project team.
+# Agent Search / Discovery Engine is intentionally not part of this release.
+
+google-adk[db,gcp]==2.11.0
+google-genai==2.28.0
+google-cloud-aiplatform==1.165.1
+google-cloud-agentplatform==2.5.0
+google-cloud-storage>=3.0.0,<4.0.0
+
+fastapi>=0.118.0,<1.0.0
+uvicorn[standard]>=0.35.0,<1.0.0
+python-multipart>=0.0.20,<1.0.0
+pydantic-settings>=2.10.0,<3.0.0
+
+trimesh>=4.8.0,<5.0.0
+numpy>=2.0.0,<3.0.0
+opencv-contrib-python-headless>=4.10.0,<6.0.0
+
+httpx==0.28.1
+tenacity==9.1.4
+
+aiosqlite>=0.20.0,<1.0.0
+asyncpg>=0.30.0,<1.0.0
+pytest>=8.0.0,<9.0.0

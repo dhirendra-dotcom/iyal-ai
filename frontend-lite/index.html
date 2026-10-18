@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Closing the last mile of physical accessibility, when standard adaptations don't fit your needs.">
+  <title>Iyal.ai · Personal adaptation</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="brand">
+    <div class="brand-lockup">
+      <span class="logo" aria-hidden="true">I</span>
+      <div>
+        <strong>Iyal.ai</strong>
+        <p>Personal adaptation intelligence</p>
+      </div>
+    </div>
+    <p class="brand-purpose">Closing the last mile of physical accessibility — when standard adaptations don’t fit your needs</p>
+    <span id="connection" role="status">Connecting…</span>
+  </header>
+
+  <main class="app-shell">
+    <div class="top-context">
+      <section class="hero" aria-label="Everyday independence">
+        <div>
+          <span class="eyebrow">DESIGNED AROUND YOUR EVERYDAY</span>
+          <h1>Small adaptations. More possibilities.</h1>
+          <p>Describe the task. Iyal helps explore, fit, visualize and refine a practical adaptation.</p>
+        </div>
+        <figure data-slideshow>
+          <img class="slide is-active" src="./assets/hero.webp" alt="Illustrative scene of a smiling woman enjoying breakfast with an adapted spoon at home">
+          <img class="slide" src="./assets/everyday-2.jpg" style="object-position:center 30%" loading="lazy" decoding="async" alt="Illustrative scene of a woman eating porridge with a thick, easy-grip spoon handle">
+          <img class="slide" src="./assets/everyday-3.jpg" style="object-position:center 55%" loading="lazy" decoding="async" alt="Illustrative scene of a smiling woman using a spoon with a wrapped, curved grip">
+          <img class="slide" src="./assets/everyday-4.jpg" style="object-position:center 35%" loading="lazy" decoding="async" alt="Illustrative scene of a man enjoying soup with a contoured grip-sleeve spoon">
+          <figcaption>Illustrative image</figcaption>
+        </figure>
+      </section>
+      <p class="notice"><strong>Design assistance only.</strong><span>Generated adaptations need physical fit and manufacturing checks. Iyal.ai does not provide medical advice.</span></p>
+    </div>
+
+    <div class="workspace">
+      <section class="conversation panel" aria-label="Your conversation">
+        <div id="messages" role="log" aria-label="Conversation messages" aria-live="polite">
+          <article class="message assistant">Standard adaptations don’t fit everyone. What everyday task is difficult, and what hasn’t worked for you? You can describe it, share a photo, or ask for a custom design.</article>
+        </div>
+
+        <p id="activity" role="status"></p>
+
+        <form id="composer">
+          <label class="sr-only" for="prompt">Your message</label>
+          <textarea id="prompt" rows="2" maxlength="4000" placeholder="What would you like to make easier?"></textarea>
+          <div id="attachments" aria-label="Selected attachments"></div>
+          <div class="composer-actions">
+            <button type="button" id="photo" title="Take a photo">📷 <span>Photo</span></button>
+            <button type="button" id="attach" title="Attach an image or video">＋ <span>Image / video</span></button>
+            <button type="button" id="dictate" class="mic-button" aria-pressed="false" title="Record voice and convert it to editable text">🎙 <span>Record voice</span></button>
+            <button type="button" id="stop" hidden>Stop</button>
+            <button class="primary" id="send" disabled>Send <span aria-hidden="true">→</span></button>
+          </div>
+          <p id="voice-status" class="voice-status" role="status" aria-live="polite"></p>
+          <input id="files" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" multiple hidden>
+          <input id="camera" type="file" accept="image/*" capture="environment" hidden>
+          <p class="muted composer-note">Share only what helps. We’ll ask for measurements when personal fit requires them.</p>
+        </form>
+        <button id="retry" type="button" hidden>Reconnect</button>
+      </section>
+
+      <aside class="panel solution" aria-label="Current solution">
+        <div class="solution-header">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">SOLUTION WORKSPACE</span>
+              <h2>Your adaptation, taking shape.</h2>
+            </div>
+            <span class="workspace-live">LIVE</span>
+          </div>
+          <p id="solution-status" role="status">Start with what you want to make easier.</p>
+
+          <ol class="journey" id="journey" aria-label="Adaptation journey">
+            <li data-stage="understand" class="active"><span>1</span><small>Need</small></li>
+            <li data-stage="options"><span>2</span><small>Options</small></li>
+            <li data-stage="fit"><span>3</span><small>Fit</small></li>
+            <li data-stage="design"><span>4</span><small>Design</small></li>
+            <li data-stage="next"><span>5</span><small>Next step</small></li>
+          </ol>
+        </div>
+
+        <div class="solution-scroll" tabindex="0" aria-label="Scrollable solution details">
+          <details id="gemini" open>
+            <summary>✦ With Gemini</summary>
+            <p id="capabilities" class="capability-chips">Capabilities will appear here as they are used.</p>
+            <small>Physical dimensions use calibrated computer vision. Design checks and CAD use deterministic tools. Generated previews illustrate a concept; they do not verify fit.</small>
+          </details>
+          <div id="solution-input"></div>
+          <div id="recommendation"></div>
+          <div id="market"></div>
+          <div id="next-step"></div>
+          <div id="measurements"></div>
+          <div id="measured"></div>
+          <div id="design"></div>
+          <div id="fit-review"></div>
+          <div id="follow-up"></div>
+          <div id="preview"></div>
+          <p id="empty" class="empty">Your recommendation, measurements and solution details will appear here as the conversation progresses.</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer><span>Iyal.ai v0.13.2 Lite</span><span>Personal adaptation intelligence</span></footer>
+  </main>
+  <noscript>Enable JavaScript to use the conversation and design tools.</noscript>
+</body>
+</html>

@@ -1,0 +1,3 @@
+IYAL.ai Lite v0.13.2
+UI build: v0.13.2
+Base release: v0.13.0 + landing page + market-research efficiency

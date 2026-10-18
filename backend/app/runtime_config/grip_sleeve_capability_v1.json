@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "cad_family_id": "GRIP_SLEEVE_V1",
+  "adaptation_family": "grip_sleeve",
+  "status": "approved_prototype",
+  "description": "Reusable grip-sleeve CAD family for elongated handheld objects.",
+  "supported_object_examples": [
+    "spoon",
+    "fork",
+    "pen",
+    "toothbrush",
+    "paint_brush",
+    "small_hand_tool"
+  ],
+  "required_interface_measurements": [
+    "interface_width_mm",
+    "interface_depth_mm",
+    "available_length_mm"
+  ],
+  "supported_parameters": [
+    "outer_width_mm",
+    "outer_depth_mm",
+    "adapter_length_mm",
+    "interface_width_mm",
+    "interface_depth_mm",
+    "angle_deg",
+    "profile",
+    "texture",
+    "palm_flare"
+  ],
+  "supported_primitives": [
+    "create_sleeve",
+    "create_slot",
+    "add_ribs",
+    "add_flare"
+  ],
+  "unsupported_in_v1": [
+    "articulated_parts",
+    "active_tremor_stabilization",
+    "embedded_electronics",
+    "load_bearing_structure",
+    "arbitrary_freeform_surface_generation"
+  ]
+}
