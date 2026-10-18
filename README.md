@@ -1,229 +1,252 @@
-Iyal.ai
-Personal Adaptation Intelligence for everyday objects and environments
-Iyal.ai helps people explore practical adaptations when standard products do not fit their everyday needs. It combines conversational reasoning, live market research, guided measurement, constrained 3D design, generated previews, and optional human support in one workflow.
-> **Design assistance only.** Iyal.ai is not a medical device and does not provide diagnosis, treatment, therapy, prognosis, or medical advice. Generated designs and previews require physical fit and manufacturing checks before real-world use.
-Problem
-Many everyday products are designed for an average user. When grip, reach, visibility, stability, or environmental fit differs from that assumption, people often have to choose between an off-the-shelf product that may not fit and a fully custom solution that is difficult to create.
-Iyal.ai closes that gap by first checking whether a simpler or existing solution already works, then moving to personalized adaptation only when needed.
-What Iyal.ai does
-Iyal.ai can:
-understand an everyday task, object, environment, and desired outcome through conversation;
-perform live Google Search-grounded market research before recommending purchasable adaptations;
-show grounded market findings and source links directly in the conversation;
-compare simple alternatives such as technique changes, existing products, object modification, or custom design;
-guide the user through only the measurements required for the selected adaptation;
-measure supported object dimensions from calibrated images or accept explicit manual measurements;
-validate supported CAD parameters against deterministic engineering constraints;
-generate a 3D-printable STL for the supported custom grip-sleeve family;
-generate an illustrative usage preview;
-assess whether an optional human fit review would be useful;
-optionally use managed Sessions and Memory Bank for durable, non-sensitive adaptation preferences.
-User journey
+# Iyal.ai v0.13.3 Lite
+
+## v0.13.3: demo-scenario improvements
+
+See `RELEASE_NOTES_v0.13.3.md` for the changes and `LOCAL_DEPLOYMENT.md` to run locally and rehearse the three demo scenarios.
+
+## v0.13.2: faster, cheaper market research
+
+See `docs/release-notes/RELEASE_NOTES_v0.13.2.md`. New optional settings, all with safe defaults:
+
 ```text
-Describe the everyday challenge
-        ↓
-Understand need, object and desired outcome
-        ↓
-Check simple/no-purchase alternatives
-        ↓
-Live market research when a purchasable option is relevant
-        ↓
-Choose an adaptation strategy
-        ↓
-Collect only the measurements needed
-        ↓
-Validate engineering constraints
-        ↓
-Generate custom 3D design when supported
-        ↓
-Show STL + illustrative usage preview
-        ↓
-Optional product-support / fit review
+PRODUCT_SEARCH_ATTEMPT_TIMEOUT_SECONDS=25   per-attempt deadline (also the server deadline)
+PRODUCT_SEARCH_MAX_ATTEMPTS=2               retries only 429 / 499 / 5xx / timeouts
+PRODUCT_SEARCH_MAX_PER_SESSION=3            live grounded searches per conversation
+PRODUCT_SEARCH_MAX_SOURCES=5                source links shown, most-cited first
+PRODUCT_SEARCH_CACHE_TTL_SECONDS=21600      reuse identical searches across sessions (0 disables)
+PRODUCT_SEARCH_CACHE_MAX_ENTRIES=128        per-instance cache size
+AGENT_MODEL_FIRST_CHUNK_TIMEOUT_SECONDS=40  main agent: resend once if no output by then (0 disables)
+AGENT_MODEL_MAX_ATTEMPTS=2
 ```
-The Conversation pane carries the user interaction, grounded market research, generated images, and inline 3D viewer. The Solution Workspace provides compact progress and solution status as the workflow advances.
-Current capabilities
-Market research and adaptation reasoning
-The agent can reason about low-risk everyday object and environment adaptations such as grip support, edge protection, visual cues, impact protection, reach/access aids, path clearance, and other practical adjustments. Any recommendation that involves buying a product is preceded by a live Google Search-grounded market check.
-Custom 3D design
-Current CAD generation is intentionally constrained to `GRIP_SLEEVE_V1`, a reusable grip-sleeve family for elongated handheld objects.
-Supported examples include:
-spoon;
-fork;
-pen;
-toothbrush;
-paint brush;
-suitable small hand tools.
-The supported design family can vary outer width/depth, adapter length, interface dimensions, angle, profile, texture, and palm flare within deterministic engineering limits.
-Environment adaptations
-Iyal.ai can recommend or visualize reversible, low-risk changes such as path clearance, visual cues, and impact protection. It does not generate structural, electrical, load-bearing, fall-protection, or medical-device designs.
-Key features
-Google Search-grounded market research — current market findings with grounding links.
-Conversational decision flow — custom CAD is one option, not the default.
-Guided measurement — calibrated image measurement plus explicit manual measurement fallback.
-Engineering validation — deterministic checks before CAD generation.
-3D-printable output — OpenSCAD-based STL generation for the supported grip-sleeve family.
-Inline 3D viewer — generated STL remains inside the conversation experience.
-Generated usage preview — illustrative visualization of the proposed adaptation.
-Structured observability — model/tool timing and error events suitable for Cloud Run logs.
-Optional managed context — Vertex AI Sessions and Memory Bank can be enabled without moving execution away from Cloud Run.
-Optional human support flow — fit-review recommendation based on evidence and unresolved uncertainty.
-Architecture
+
+## v0.13.1: landing page at `/`
+
+v0.13.1 is v0.13.0 plus a landing page. The market-research behaviour from v0.13.0 is unchanged.
+
+- The static landing page lives in `site/`. It was copied from `arthistics/sites/iyal-personal-fit/dist`, with the hero image converted to WebP.
+- FastAPI serves the landing page at `/` as the last mount, so `/api/...`, `/health` and `/app/` are unaffected. The JSON root response is only registered when `site/` is missing.
+- "Talk to Iyal" opens the chat at `/app/`.
+- "Continue with Iyal" opens `/app/#starter=<text>`. The URL fragment is never sent to the server. The chat prefills the message box, clears the fragment, and waits for the person to press Send.
+- Cloud Run service `iyalaiv3` runs this release with the same service account, scaling, Sessions and Memory Bank as `iyalaiv2`.
+
+Iyal.ai Lite runs the native browser UI + FastAPI + one ADK agent in a single Cloud Run service. v0.13.0 simplifies market research: Google Search-grounded `response.text` is displayed directly in the conversation with grounding links below it, while the Solution Workspace shows only market-research progress/completion status.
+
+## Runtime
+
 ```text
-Browser UI
-   │
-   ▼
-Cloud Run
-FastAPI + Google ADK root agent
-   │
-   ├── Gemini 3.8 Flash
-   │     ├── conversational reasoning
-   │     ├── tool selection
-   │     └── Google Search grounding
-   │
-   ├── Measurement pipeline
-   │     ├── calibrated image measurement
-   │     └── manual measurement fallback
-   │
-   ├── Engineering validation
-   │
-   ├── OpenSCAD CAD generation
-   │     └── STL artifact
-   │
-   ├── Gemini image generation
-   │     └── illustrative usage preview
-   │
-   ├── Google Cloud Storage
-   │     └── generated artifacts
-   │
-   └── Optional Agent Platform context services
-         ├── managed Sessions
-         └── Memory Bank
+Browser
+  -> Cloud Run (FastAPI + ADK root agent)
+       -> Gemini / Vertex AI
+       -> Google Search grounding
+       -> GCS artifacts
+       -> Agent Platform Sessions (optional)
+       -> Memory Bank (optional)
 ```
-Cloud Run is the application execution runtime. Agent Platform resources, when configured, are used only for managed session and memory services.
-Technology stack
-Layer	Technology
-Frontend	HTML, CSS, JavaScript
-Backend	Python 3.12, FastAPI
-Agent framework	Google ADK
-Primary model	Gemini 3.8 Flash
-Market research	Google Search grounding
-Image/vision	Gemini + OpenCV
-CAD	OpenSCAD
-3D processing	Trimesh
-Artifact storage	Google Cloud Storage
-Runtime	Google Cloud Run
-Optional context	Vertex AI / Agent Platform Sessions and Memory Bank
-Repository structure
+
+Cloud Run remains the execution runtime. The Agent Runtime ID is only the backing resource for managed Sessions.
+
+## v0.13.0 highlights
+
+- `search_existing_products` no longer asks Gemini to produce application-defined product JSON.
+- The tool returns grounded conversational `market_text` plus Google Search grounding links.
+- Market research is rendered in the Conversation pane under a dedicated **Market research** message.
+- Grounded source links are displayed directly beneath the market-research response.
+- The Solution Workspace shows only **Market research — In progress / Completed / Could not complete** status, including grounded-source count when available.
+- The root agent is instructed not to repeat the full market-research response after the tool result is already displayed.
+- The prior JSON parse/retry failure path is no longer part of the live market-search flow.
+- Existing viewport layout, inline generated image, inline 3D viewer, and artifact URL/loading safety behavior are retained.
+- Release/build naming remains simple: `v0.13.0`; `inline-chat` is not part of the release name.
+
+## Local run
+
+Install dependencies and configure `backend/.env`, then:
+
+```bash
+./scripts/run-lite.sh
+```
+
+Windows PowerShell:
+
+```powershell
+.\scripts\run-lite.ps1
+```
+
+Open `http://127.0.0.1:8000/app/`.
+
+Without Agent Platform IDs:
+
 ```text
-.
-├── backend/
-│   ├── app/                 # FastAPI, ADK agent, tools and workflow logic
-│   ├── cad/                 # OpenSCAD design source
-│   ├── tests/               # Backend tests
-│   └── requirements.txt
-├── frontend-lite/           # Browser UI, inline viewer and frontend tests
-├── scripts/                 # Local run, deployment, packaging and provisioning
-├── docs/                    # Supporting design/implementation documentation
-├── Dockerfile               # Cloud Run container
-├── VERSION.txt
-└── README.md
+SESSION_DB_URL set -> DatabaseSessionService
+otherwise          -> InMemorySessionService
+Memory Bank        -> disabled
 ```
-Prerequisites
-For local development:
-Python 3.12 recommended;
-OpenSCAD available on `PATH`;
-a Google Cloud project with Vertex AI / Gemini access;
-a Google Cloud Storage bucket for generated artifacts;
-Application Default Credentials or equivalent Google Cloud authentication.
-The container image installs OpenSCAD automatically.
-Configuration
-Create `backend/.env` with the required environment values. At minimum:
-```text
-GOOGLE_CLOUD_PROJECT=your-project-id
-GOOGLE_CLOUD_LOCATION=global
-GOOGLE_GENAI_USE_VERTEXAI=TRUE
-GCS_BUCKET=your-artifact-bucket
-OPENSCAD_BINARY=openscad
+
+## Managed Sessions + Memory Bank
+
+Provision once per environment if you have not already done so:
+
+```bash
+python scripts/provision-agent-context.py \
+  --project YOUR_PROJECT_ID \
+  --location asia-south1
 ```
-Optional managed session/memory configuration:
+
+Use the printed values:
+
 ```text
 AGENT_PLATFORM_LOCATION=asia-south1
 VERTEX_SESSION_RUNTIME_ID=...
 VERTEX_MEMORY_BANK_ID=...
 MEMORY_ENABLED=true
 ```
-Without managed Agent Platform resources, the application can use a configured database session service or fall back to in-memory sessions.
-Run locally
-Install dependencies:
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
-```
-Run:
-```bash
-./scripts/run-lite.sh
-```
-Windows PowerShell:
-```powershell
-.\scripts\run-lite.ps1
-```
-Open:
+
+**Existing Agent Platform Session/Memory Bank resources are reused by v0.13.0. Do not provision again solely for this release.**
+
+`services.py` selects Sessions in this order:
+
 ```text
-http://127.0.0.1:8000/app/
+VERTEX_SESSION_RUNTIME_ID -> VertexAiSessionService
+SESSION_DB_URL            -> DatabaseSessionService
+otherwise                 -> InMemorySessionService
 ```
-Deploy to Cloud Run
+
+The browser retains an opaque `iyal_user_id` in `localStorage`. For production authentication, bind `user_id` server-side to the authenticated user's immutable identity instead of trusting a browser-provided ID.
+
+## Memory behavior
+
+Memory is not generated for every message.
+
+- Explicit outcome feedback is converted to a safe pre-extracted fact and submitted to Memory Bank in a background task.
+- Gemini may call `remember_adaptation_preference` for durable design preferences/fit feedback.
+- `LoadMemoryTool` retrieves prior memories only when useful.
+- Do not persist diagnoses, symptoms, contact details or object-specific measurements as intended personalization.
+
+An asynchronous Memory Bank write now logs:
+
+```text
+memory_candidate_created
+memory_write_started
+memory_write_accepted
+```
+
+`memory_write_accepted` means the GenerateMemories request was accepted; consolidation can still create, update, merge or omit a memory.
+
+### Verify Memory Bank directly
+
+Use the same user ID as the browser when verifying application memories. In browser DevTools:
+
+```javascript
+localStorage.getItem('iyal_user_id')
+```
+
+Then:
+
+```bash
+python scripts/test-memory-bank.py \
+  --project YOUR_PROJECT_ID \
+  --location YOUR_LOCATION \
+  --memory-bank-id YOUR_MEMORY_BANK_ID \
+  --user-id usr-... \
+  --list-only
+```
+
+For a blocking write + retrieval smoke test, omit `--list-only`.
+
+## Market grounding rule
+
+The Python tool guard, not just the prompt, requires a live market-search attempt before these strategies are presented:
+
+```text
+buy_existing
+modify_object
+custom_cad (unless explicitly requested)
+standard_adaptation
+edge_protection
+visual_cue
+impact_padding
+reach_access
+custom_environment_fixture
+```
+
+These pure no-purchase strategies are exempt:
+
+```text
+change_technique
+path_clearance
+furniture_repositioning
+professional_help
+```
+
+If Google Search fails, Iyal.ai may continue with generic low-risk guidance but must not claim current product evidence.
+
+## Current root tools
+
+```text
+search_existing_products
+present_adaptation_options
+present_measurement_plan
+register_usage_video
+measure_object_from_capture
+register_manual_measurement
+validate_design
+generate_3d_design
+generate_usage_preview
+generate_environment_preview
+assess_support_need
+offer_product_support
+```
+
+When Memory Bank is enabled, `LoadMemoryTool` and `remember_adaptation_preference` are also registered.
+
+There are no extra intake/design/support sub-agents in this release.
+
+## Model timing logs
+
+For each logical model request, look for:
+
+```text
+model_request_start
+model_first_chunk
+model_request_complete
+```
+
+`model_request_complete` is emitted only for ADK's final aggregated `partial=False` response, so it no longer repeats for each streaming chunk.
+
+Tool logs remain:
+
+```text
+tool_start
+tool_complete
+tool_error
+```
+
+This makes it possible to distinguish model latency from tool latency.
+
+## Deployment
+
+The deployment script no longer sends Agent Search variables or `GEMINI_THINKING_LEVEL`.
+
 Example:
+
 ```bash
 export REGION=asia-south1
+export AGENT_PLATFORM_LOCATION=asia-south1
+export VERTEX_SESSION_RUNTIME_ID=...
+export VERTEX_MEMORY_BANK_ID=...
+export MEMORY_ENABLED=true
 
 ./scripts/deploy-lite.sh \
   /path/to/iyal-v0.13.0 \
   YOUR_ARTIFACT_BUCKET \
   YOUR_RUNTIME_SERVICE_ACCOUNT
 ```
-If managed Sessions or Memory Bank are required, provision the backing context resources once per environment and provide their IDs as environment variables.
-Demo walkthrough
-A representative end-to-end scenario is an everyday utensil grip:
-The user explains that a spoon is difficult to hold securely.
-Iyal.ai identifies the functional goal and performs live market research for existing adaptations.
-Grounded market findings and source links appear in the conversation.
-If a personalized solution is preferred, Iyal.ai requests only the required handle measurements.
-Measurements are registered from calibrated capture and/or explicit user values.
-The proposed grip sleeve is checked against engineering constraints.
-OpenSCAD generates the STL.
-The STL appears in the inline 3D viewer.
-An illustrative usage preview is generated.
-Iyal.ai can recommend an optional product-support review when fit uncertainty remains.
-The same custom CAD family can be applied to other suitable elongated handheld objects such as forks, pens, toothbrushes, paint brushes, and small hand tools.
-Safety and design boundaries
-Iyal.ai intentionally separates design assistance from clinical or safety-critical decision-making.
-It does not diagnose or infer a medical condition.
-It does not provide treatment, therapy, prognosis, or medical advice.
-It does not fabricate measurements from an image without physical scale.
-Generated previews are illustrative and do not prove fit or effectiveness.
-A CAD design passing software checks is not equivalent to a physically validated product.
-Structural, electrical, load-bearing, fall-protection, and medical-device designs are outside the supported scope.
-Real-world fit must be checked after manufacturing before use.
-Current limitations
-Custom CAD is currently limited to the `GRIP_SLEEVE_V1` family.
-Arbitrary free-form CAD generation is not supported.
-Articulated parts, embedded electronics, active stabilization, and load-bearing structures are outside the current design capability.
-Market availability, price, delivery, and final product fit must be verified with the cited seller/source.
-Generated usage images are concept previews, not evidence of physical performance.
-Mobile UI is responsive but the current primary layout is optimized for the desktop/tablet demo experience.
-Testing
-Frontend tests:
+
+The script fails fast if `MEMORY_ENABLED=true` but no Memory Bank ID is supplied.
+
+## Packaging
+
 ```bash
-node --test \
-  frontend-lite/tests/core.test.mjs \
-  frontend-lite/tests/stl-viewer.test.mjs
+./scripts/package-lite.sh
 ```
-Backend tests:
-```bash
-PYTHONPATH=backend pytest -q backend/tests
-```
-See `BUILD_VERIFICATION.md` for the verification summary associated with the release.
-Release
-Current release: v0.13.0
-See `RELEASE_NOTES_v0.13.0.md` for release-specific implementation changes.
+
+The clean ZIP excludes virtual environments, caches, `.env` files, generated artifacts and logs.
